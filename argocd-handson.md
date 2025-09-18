@@ -193,7 +193,7 @@ After the installation script has completed, we should have a working Docker
 engine. Let's check it out:
 
 ```bash
-~$ sudo docker --version
+sudo docker --version
 ```
 
 If everything works, we should see the Docker version information.
@@ -315,13 +315,13 @@ Gogs is up! ✅
 ```
 
 Done! Gogs has a built-in web UI which we can reach by just opening an SSH tunnel
-to our hands-on machine:
+to our hands-on machine using its `public ip` address:
 
 ```shell
-ssh -i ~/key.pem -L 2222:localhost:2222  -L 3000:localhost:3000 ubuntu@<hands.on.ip.addr>
+ssh -i ./key.pem -L 2222:localhost:2222  -L 3000:localhost:3000 ubuntu@<hands.on.ip.addr>
 ```
 
-and then using the url: [http://localhost:3000/]() in a web browser:
+and then using the url: [http://localhost:3000/](http://localhost:3000/) in a web browser:
 
 <img src="./img/gogs-home.png" width=50%>
 
@@ -335,20 +335,17 @@ In the Gogs Web ui, click on the `Sign in` link in the upper right-hand side
 corner and log-in with the credentials from the previous step.
 
 - username: `dojo`
-- password: <dynamic-password>
+- password: <the-dynamic-password>
 
 Click on the `+` icon, next to "My Repositories" field on the main screen:
 
 <img src="./img/gogs-create-repo-link.png" width=60%>
 
-A new screen, `New Repository`, will appear where we can configure our new repository
-by simply typing a name: `argo` and then clicking on the `Create Repository` link.
+A new screen, `New Repository`, will appear where we can configure our new
+repository. Let's use the name: `argo` and leave the rest of the settings as
+default. Click on the `Create Repository` button on the bottom of the screen.
 
 <img src="./img/gogs-new-repo.png" width=60%>
-
-By default the git branch name in Gogs in `main`, we'll change it to master. Click on the
-settings icon for the new repository. On the left hand side select `branches`, then change
-the default branch from `main` to `master`
 
 Our repository is now ready! Write down the repository url for later:
 `git@localhost:dojo/argo.git`
@@ -365,7 +362,6 @@ Generate a new SSH key and add it to the agent:
 
 ```shell
 ssh-keygen -t ed25519 -C "operations@dojobits.io" -N "" -f ~/.ssh/dojo.key
-ssh-add ~/.ssh/dojo.key
 cat <<EOF >> ~/.ssh/config
 Host localhost
   HostName localhost
@@ -505,18 +501,23 @@ In a new terminal tab/window, run the following command to open a new SSH sessio
 with the hands-on machine and establish a tunnel:
 
 ```shell
-ssh -i key.pem -L 8080:localhost:443 ubuntu@<hands.on.vm.ip>
+ssh -i ./key.pem -L 8080:localhost:8080 ubuntu@<hands.on.vm.ip>
 ```
 
 Then, inside the console, make the  kubernetes service for the ArgoCD Web UI
 reachable using port forwarding:
 
 ```shell
-kubectl -n argocd port-forward svc/argo-cd-argocd-server 8080:443
+kubectl -n argocd port-forward svc/argo-cd-argocd-server 8080:80
 ```
 
 If everything goes according to plan, you should be able to open the ArgoCD web UI inside
-your web browser using the following url: [http://localhost:8080]():
+your web browser using the following url: [http://localhost:8080](http://localhost:8080):
+
+> [!Note]
+> you'll see a warning `Warning: Potential Security Risk Ahead` or
+> `Your connection is not private` by your browser as we are using insecure
+> connection. Acknowledge the warning and proceed to the web page.
 
 <img src="./img/argocd-login.png" width=50%>
 
@@ -699,9 +700,10 @@ Let's commit and push them to our git repository:
 ```shell
 git config --global user.email "operations@dojobits.io"
 git config --global user.name "dojo"
+git checkout -b main
 git add .
 git commit -av -m "demo app deployment and service"
-git push
+git push --set-upstream origin main
 ```
 
 
@@ -710,7 +712,7 @@ git push
 Before we can deploy our application and create an Argo Application,
 we have to configure the Git Repository authentication.
 
-Open the ArgoCD Web UI: [https://localhost:8080/applications](). From the left
+Open the ArgoCD Web UI: [https://localhost:8080/applications](https://localhost:8080/applications). From the left
 siderbar select: Settings -> Repositories -> `Connect Repo`
 
 <img src="./img/argocd-git-repo-connect.png" width=60%>
@@ -718,14 +720,22 @@ siderbar select: Settings -> Repositories -> `Connect Repo`
 Inside the form, we configure how ArgoCD connects and authenticates against the
 remote git repository.
 
-- Connection method: VIA SSH
-- Connection Name: argo
-- Project: default
-- Repository URL: ssh://git@<private.host.ip.addr>:2222/dojo/argo.git
-- SSH key: <The private SSH key>
+- Connection method: `VIA SSH`
+- Connection Name: `argo`
+- Project: `default`
+- Repository URL: `ssh://git@<private.host.ip.addr>:2222/dojo/argo.git`
+  The <private.host.ip.addr> is the private ip address of the hands-on machine.
+  You can get it form the terminal. Use the command `ip -4 a` to list all ipv4
+  addresses and related network interfaces. Look for the first network interface.
+  Alternatively you could try to use:
+  `ip -4 -o a | cut -d ":" -f 2 | grep -vE "^ lo|^ br-|^ docker|^ cilium_host"`
 
-- Skip server verification: checked
-- Enable LFS support (Git only): checked
+- SSH key: <The private SSH key>
+  This is the SSH key we've generated in the previous step. You can get it from
+  the shell using:
+  `cat ~/.ssh/dojo.key`
+- Skip server verification: `checked`
+- Enable LFS support (Git only): `checked`
 
 Click: `CONNECT` to save the configuration and test the connection.
 Upon successful connection, the connection status should change to:
@@ -743,24 +753,28 @@ Fill in the following information:
 
 General:
 
-- Application Name: deploy-demo
-- Project Name: default
+- Application Name: `deploy-demo`
+- Project Name: `default`
 
 SYNC POLICY:
 
-- Sync Policy: Automatic
-- ENABLE AUTO-SYNC: Checked
-- AUTO-CREATE NAMESPACE: Checked
+- Sync Policy: `Automatic`
+- ENABLE AUTO-SYNC: `Checked`
+
+SYNC OPTIONS:
+
+- AUTO-CREATE NAMESPACE: `Checked`
 
 SOURCE:
 
-- Repository URL: ssh://git@<private.host.ip.addr>:2222/dojo/argo.git
+- Repository URL: `ssh://git@<private.host.ip.addr>:2222/dojo/argo.git`
 - Revision: HEAD
-- Path: .
+- Path: `.`
 
 DESTINATION:
-Cluster URL: https://kubernetes.default.svc
-Namespace: demo
+
+- Cluster URL: `https://kubernetes.default.svc`
+- Namespace: `demo`
 
 >[!Note]
 > In our original manifest, we've not specified any namespace, and here we effectively

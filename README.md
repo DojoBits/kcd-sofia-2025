@@ -16,14 +16,6 @@
 
 <br />
 
-# Workshop Materials
-
-All the workshop materials will be shared in this repository prior to the begining of the workshop!
-
-<div align="center">
-  <h2 align="center">Stay Tuned!</h2>
-</div>
-<br />
 
 ## Workshop Details
 
@@ -31,21 +23,31 @@ All the workshop materials will be shared in this repository prior to the begini
 - **Location**: Sofia Event Center, 1407 Hladilnika, Mall Paradise, floor 3, Room "ALPHA"
 - **Start Time**: 13:00
 - **Duration**: 2 hours
+- **Max Attendies**: 100
 - **Format**: Hands-on, practical exercises
 - **Hands-on Environment**: Each participant will be provided with an individual cloud-based virtual machine for all workshop activities.
 
 
 ## What You Need to Bring
 
+- A KCD Ticket :)
 - Positive attitude!
 - Your own laptop to fully participate in the workshop exercises.
 - Make sure you have an SSH client and a Web Browser installed.
 
 
-If you have any questions before the event, feel free to reach out.
 
-We look forward to seeing you at the workshop!
+## Workshop Abstract
+
+GitOps is a modern approach to managing cloud native infrastructure, transforming operations by leveraging Git as the single source of truth for infrastructure and application management. This hands-on workshop explores how ArgoCD brings GitOps principles into practice, enabling automated delivery and continuous reconciliation within Kubernetes environments. Through real-world scenarios and guided hands-on exercises, participants will learn to automate deployments, enhance cluster reliability, and troubleshoot common challenges. The session combines concise lectures, live demonstrations, and practical exercises, providing you with the skills and confidence to implement secure, scalable, and maintainable GitOps solutions.
+
+
+
+If you have any questions before or after the event, feel free to reach out.
+
+We look forward to seeing you at KCD Sofia 2025!
 
 The Dojobits Team
 
 <img src="https://dojobits.github.io/assets/logo/dojobits-logo.png" width="40%">
+

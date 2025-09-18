@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>argocd-handson.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="kcd-sofia-2025">KCD Sofia 2025</h1>
+<img src="https://res.cloudinary.com/startup-grind/image/upload/c_fill%2Cdpr_2.0%2Cf_auto%2Cg_center%2Cq_auto:good/v1/gcs/platform-data-cncf/chapter_banners/cncf-kcd-header_UyBGlEm.png" alt="KCD Logo">
+<h2 id="gitops-made-simple-best-practices-using-argocd--kubernetes">GitOps made simple: Best Practices using ArgoCD &amp; Kubernetes</h2>
+<h2 id="overview">Overview</h2>
+<p>GitOps is a powerful approach for using Git as a single source of truth for
+managing both application and infrastructure configurations. GitOps is a specialized
+methodology within the broader DevOps cultural and technical philosophy, and brings
+several key benefits:</p>
+<ul>
+<li>
+<p><code>Repeatability</code>: Every deployment or configuration is versioned in Git, making
+environments easy to reproduce or redeploy.</p>
+</li>
+<li>
+<p><code>Traceability</code>: Every change is tracked and documented as a commit, enabling
+audits and clear visibility into who made what change and when.</p>
+</li>
+<li>
+<p><code>Audit and Rollback</code>: Since changes are version-controlled, rolling back to a
+stable state is as simple as reverting a Git commit, making rollbacks secure
+and fast.</p>
+</li>
+</ul>
+<p>Through Git-driven workflows, GitOps provides automation and reliability, especially
+for modern cloud environments. Unlike traditional administration approaches—where
+configuration changes are applied directly to the Kubernetes environment — in
+GitOps every intended change is made via commits to Git, and only then is it reflected
+in the cluster.</p>
+<img src="./img/gitops-architecture.png" width=70%>
+<p>ArgoCD implements GitOps practices by continuously monitoring Git repositories
+through a combination of periodic polling and webhooks. It automatically detects
+changes and syncs those changes to the Kubernetes infrastructure. When a
+configuration or application update is pushed to Git, ArgoCD ensures the live
+cluster matches what’s described in Git, without requiring manual intervention,
+thus enabling consistent, secure, and auditable operations.</p>
+<p>Throughout this workshop, we'll see in practice how to build a simple infrastructure
+based on Git, Kubernetes, and ArgoCD, and how to implement these principles hands-on.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>The list of prerequisites to complete the workshop are:</p>
+<blockquote>
+<p>[!Note]
+No matter whether you are using Linux, Mac OS, or Windows, they all come with
+a built-in SSH client in the terminal!</p>
+</blockquote>
+<ul>
+<li>Personal laptop</li>
+<li>Web browser</li>
+<li>SSH client - built-in like openSSH or third-party like SecureCRT, MobaXterm, Putty, etc.</li>
+<li>Internet connectivity to the cloud infrastructure</li>
+</ul>
+<h2 id="get-familiar-with-our-hands-on-environment">Get familiar with our hands-on environment</h2>
+<p>The remote lab (hands-on) environment is a virtual machine deployed in the cloud
+and is based on Ubuntu Linux 24.04 LTS. It is only accessible over SSH.</p>
+<p>The SSH session authentication will be based on the username: <code>ubuntu</code>
+and an <code>SSH key</code> that will be shared with you at the beginning of the event.</p>
+<blockquote>
+<p>[!Note]
+Please don't change the default credentials!</p>
+</blockquote>
+<blockquote>
+<p>[!Warning]
+The handson machines are short-lived and will be destroyed immediately after
+the end of the event. Please don't store any important or sensitive data on them!</p>
+</blockquote>
+<blockquote>
+<p>[!Warning]
+Please don't reboot your hands-on VM as this will change its IP address.</p>
+</blockquote>
+<p>The hands-on machine credentials are:</p>
+<ul>
+<li>username: <code>ubuntu</code></li>
+<li>password: <code>ubuntu</code></li>
+</ul>
+<p>The built-in user <code>ubuntu</code> has regular user privileges. It is a member of the
+<code>sudoers</code> group, and in case you need to elevate your privileges, you can use the
+<code>sudo</code> command.</p>
+<h3 id="connect-to-the-hands-on-environment">Connect to the Hands-On Environment</h3>
+<p>Due to security concerns, SSH requires the private key file permissions to be set
+to <code>400</code> (read-only for the owner). Let's do that first:</p>
+<pre class="hljs"><code><div>user@workstation:~$ chmod 400 key.pem
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+If you don't change the key permissions, the OpenSSH client might refuse it with
+a warning:</p>
+</blockquote>
+<pre class="hljs"><code><div>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: UNPROTECTED PRIVATE KEY FILE!              @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+</div></code></pre>
+<p>Next, let's log in to our dedicated hands-on machine using an OpenSSH client:</p>
+<pre class="hljs"><code><div>user@workstation:~$ ssh -i key.pem ubuntu@&lt;hands.on.machine.ip&gt;
+~$
+</div></code></pre>
+<h2 id="task-1-configure-the-hands-on-infrastructure">Task 1. Configure the hands-on infrastructure</h2>
+<p>In this task, we'll do the initial environment setup:</p>
+<ul>
+<li>Install Docker and Kubernetes</li>
+<li>Verify both services are running</li>
+<li>Install the git server - Gogs</li>
+</ul>
+<h3 id="task-11-installing-docker-and-kubernetes">Task 1.1. Installing Docker and Kubernetes</h3>
+<p>To complete the workshop exercises, we'll need a working Docker CE and a
+Kubernetes cluster.</p>
+<p>Docker CE is an open-source platform that allows us to develop, ship, and run
+applications in containers — lightweight, portable units that encapsulate
+everything an application needs to run. It will enable us to create a consistent
+environment for running our git server - Gogs separate from our Kubernetes cluster.</p>
+<p>To automate the installation of Docker and Kubernetes, which are not our main focus
+in this hands-on, we'll use a shell script.</p>
+<blockquote>
+<p>[!Warning]
+Using shell scripts from third parties might be dangerous! Please take a
+moment to review the script content before executing it!</p>
+</blockquote>
+<pre class="hljs"><code><div>wget https://raw.githubusercontent.com/DojoBits/Toolbox/main/k8s-up.sh
+</div></code></pre>
+<p>Inspect the script:</p>
+<pre class="hljs"><code><div>less k8s-up.sh
+</div></code></pre>
+<p>Then, if everything looks good, let's execute it:</p>
+<pre class="hljs"><code><div>chmod +x k8s-up.sh
+sudo ./k8s-up.sh
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+The script execution might take a few minutes, depending on the machine and
+internet connection speed.</p>
+</blockquote>
+<p>When execution is finished, you'll see:</p>
+<pre class="hljs"><code><div>...
+[INFO] Removing the control‑plane NoSchedule taint...
+node/db-lab-110 untainted
+[INFO] All done! 🎉
+
+~$
+</div></code></pre>
+<p>Now we have a fully functional single-node Kubernetes cluster!</p>
+<h3 id="task-12-verify-the-services">Task 1.2. Verify the services</h3>
+<p>Let's quickly validate that the kubernetes (k8s) cluster is up and running.</p>
+<blockquote>
+<p>[!Note]
+It may take a few seconds for the cluster status to become <code>Ready</code>:</p>
+</blockquote>
+<pre class="hljs"><code><div>kubectl get node
+</div></code></pre>
+<pre class="hljs"><code><div>NAME         STATUS   ROLES           AGE   VERSION
+db-lab-110   Ready    control-plane   34m   v1.34.1
+~$
+</div></code></pre>
+<p>After the installation script has completed, we should have a working Docker
+engine. Let's check it out:</p>
+<pre class="hljs"><code><div>~$ sudo docker --version
+</div></code></pre>
+<p>If everything works, we should see the Docker version information.</p>
+<pre class="hljs"><code><div>Docker version 28.4.0, build d8eb465
+</div></code></pre>
+<p>Now, let's check for any running containers:</p>
+<pre class="hljs"><code><div>docker ps
+</div></code></pre>
+<pre class="hljs"><code><div>permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.47/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+~$
+</div></code></pre>
+<p>We've got a permission error because we use the Docker CLI client as a regular,
+unprivileged user.</p>
+<p>To fix that, we could either run the Docker CLI client with <code>sudo</code> every time, or
+add our linux user to the docker user group:</p>
+<pre class="hljs"><code><div>sudo usermod -aG docker $(whoami)
+</div></code></pre>
+<p>To apply this configuration change, we have to log out and log back in
+into our shell session, but we can use a small trick to work around that.</p>
+<p>We will change our primary group to the docker group and then change it back to
+our initial group.</p>
+<blockquote>
+<p>[!Note]
+This is not a permanent change, and it affects only our current session.</p>
+</blockquote>
+<pre class="hljs"><code><div>newgrp docker
+groups
+</div></code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><div>docker adm cdrom sudo dip plugdev lxd ubuntu
+~$
+</div></code></pre>
+<p>Let's test again:</p>
+<pre class="hljs"><code><div>docker ps
+</div></code></pre>
+<pre class="hljs"><code><div>CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+~$
+</div></code></pre>
+<p>If that workaround doesn't work for you, please try to log out and back in to
+apply the group change.</p>
+<h3 id="task-13-install-gogs-git-server">Task 1.3. Install Gogs git server</h3>
+<p>To demonstrate the git principles, we'll need a git server. To avoid
+third-party dependencies, we'll quickly install our own open source server: <a href="https://gogs.io/">Gogs</a>.</p>
+<p>&quot;Gogs is a lightweight, self-hosted Git server written in Go, designed for painless
+installation and minimal resource usage. It lets individuals and teams run their
+own Git repositories with features like user dashboards, access control, and
+webhooks, all on their own hardware or private cloud.&quot;</p>
+<p>To automate the installation of Gogs, which is again not our main focus in this
+hands-on, we'll use another shell script.</p>
+<blockquote>
+<p>[!Warning]
+Using shell scripts from third parties might be dangerous! Please take a
+moment to review the script content before executing it!</p>
+</blockquote>
+<pre class="hljs"><code><div>wget https://raw.githubusercontent.com/DojoBits/Toolbox/main/gogs-up.sh
+</div></code></pre>
+<p>Inspect the script:</p>
+<pre class="hljs"><code><div>less gogs-up.sh
+</div></code></pre>
+<p>If everything looks good, execute the script to deploy our git server:</p>
+<pre class="hljs"><code><div>chmod +x gogs-up.sh
+./gogs-up.sh
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+The script execution might take a few minutes, depending on the machine and
+internet connection speed.</p>
+</blockquote>
+<blockquote>
+<p>[!Note]
+The password is dynamically generated during setup. Please write it down so
+you don't lose it.</p>
+</blockquote>
+<pre class="hljs"><code><div>[+] Running 1/1
+ ✔ Container gogs  Started                                                                                         0.5s
+⏳ Waiting for Gogs to start (up to 10s)…
+Gogs is up! ✅
+   Gogs is ready! 🎉
+   URL      : http://localhost:3000/
+   admin    : dojo
+   password : hTenr4rPpTTF
+   (you can change the password later via the UI)
+~$
+</div></code></pre>
+<p>Done! Gogs has a built-in web UI which we can reach by just opening an SSH tunnel
+to our hands-on machine:</p>
+<pre class="hljs"><code><div>ssh -i ~/key.pem -L 2222:localhost:2222  -L 3000:localhost:3000 ubuntu@&lt;hands.on.ip.addr&gt;
+</div></code></pre>
+<p>and then using the url: <a href="">http://localhost:3000/</a> in a web browser:</p>
+<img src="./img/gogs-home.png" width=50%>
+<h3 id="task-14-create-a-git-repository">Task 1.4. Create a git repository</h3>
+<p>We'll need a git repository where we'll store our infrastructure and configurations
+as code. With Gogs, this is quite easy!</p>
+<p>In the Gogs Web ui, click on the <code>Sign in</code> link in the upper right-hand side
+corner and log-in with the credentials from the previous step.</p>
+<ul>
+<li>username: <code>dojo</code></li>
+<li>password: <dynamic-password></li>
+</ul>
+<p>Click on the <code>+</code> icon, next to &quot;My Repositories&quot; field on the main screen:</p>
+<img src="./img/gogs-create-repo-link.png" width=60%>
+<p>A new screen, <code>New Repository</code>, will appear where we can configure our new repository
+by simply typing a name: <code>argo</code> and then clicking on the <code>Create Repository</code> link.</p>
+<img src="./img/gogs-new-repo.png" width=60%>
+<p>Our repository is now ready! Write down the repository url for later:
+<code>git@localhost:dojo/argo.git</code></p>
+<img src="./img/gogs-repo-files.png" width=60%>
+<h3 id="task-15-configure-ssh-key-based-authentication">Task 1.5. Configure SSH key-based authentication</h3>
+<p>To authenticate against our git repository using an SSH key from the console, we
+need to create an SSH key and add it to our Gogs profile.</p>
+<p>Generate a new SSH key and add it to the agent:</p>
+<pre class="hljs"><code><div>ssh-keygen -t ed25519 -C "operations@dojobits.io" -N "" -f ~/.ssh/dojo.key
+ssh-add ~/.ssh/dojo.key
+cat &lt;&lt;EOF &gt;&gt; ~/.ssh/config
+Host localhost
+  HostName localhost
+  User git
+  Port 2222
+  IdentityFile ~/.ssh/dojo.key
+  IdentitiesOnly yes
+EOF
+</div></code></pre>
+<p>Copy the content of the public key:</p>
+<pre class="hljs"><code><div>cat ~/.ssh/dojo.key.pub
+</div></code></pre>
+<p>Then register the Key in your Gogs profile:</p>
+<ul>
+<li>Log in to the Gogs web ui.</li>
+<li>Click on the User Profile Image in the upper right-hand side corner → <code>Your Settings</code> → &quot;SSH Keys&quot;.</li>
+<li>Click <code>Add Key</code>, give it a label: <code>dojo</code>, paste the contents of your public key.</li>
+<li>Click <code>Add Key</code> to save the key.</li>
+<li>Done!</li>
+</ul>
+<img src="./img/gogs-ssh-key.png" width=50%>
+<hr>
+<h3 id="task-2-argocd-installation--configuration">Task 2. ArgoCD Installation &amp; Configuration</h3>
+<p>With the Git server and Kubernetes cluster up and running, we are almost ready. Next
+we'll install ArgoCD in our Kubernetes cluster using a Helm chart.</p>
+<p>Let's add the ArgoCD Helm repository:</p>
+<pre class="hljs"><code><div>helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+</div></code></pre>
+<pre class="hljs"><code><div>"argo" has been added to your repositories
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "argo" chart repository
+Update Complete. ⎈Happy Helming!⎈
+</div></code></pre>
+<p>We'll use a separate Kubernetes namespace for managing the ArgoCD resources:
+(optionally, the NS could be created by helm as well, using --create-namespace for a
+quick test):</p>
+<pre class="hljs"><code><div>kubectl create namespace argocd
+</div></code></pre>
+<p>Install with sensible defaults</p>
+<pre class="hljs"><code><div>helm install argo-cd argo/argo-cd \
+  --namespace argocd \
+  --set server.service.type=ClusterIP
+</div></code></pre>
+<pre class="hljs"><code><div>NAME: argo-cd
+LAST DEPLOYED: Mon Sep 15 13:38:17 2025
+NAMESPACE: argocd
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+In order to access the server UI you have the following options:
+
+1. kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:443
+
+    and then open the browser on http://localhost:8080 and accept the certificate
+
+2. enable ingress in the values file `server.ingress.enabled` and either
+      - Add the annotation for ssl passthrough: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-1-ssl-passthrough
+      - Set the `configs.params."server.insecure"` in the values file and terminate SSL at your ingress: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts
+
+
+After reaching the UI for the first time, you can log in with username: `admin` and the random password generated during the installation. You can find the password by running:
+
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+(You should delete the initial secret afterwards as suggested by the Getting Started Guide: https://argo-cd.readthedocs.io/en/stable/getting_started/#4-login-using-the-cli)
+~$
+</div></code></pre>
+<p>With Helm, we've installed all the core ArgoCD components:</p>
+<pre class="hljs"><code><div>kubectl -n argocd get po
+</div></code></pre>
+<pre class="hljs"><code><div>NAME                                                        READY   STATUS    RESTARTS   AGE
+argo-cd-argocd-application-controller-0                     1/1     Running   0          4m29s
+argo-cd-argocd-applicationset-controller-5b74557886-knhg9   1/1     Running   0          4m29s
+argo-cd-argocd-dex-server-78b756d64f-z6zsv                  1/1     Running   0          4m29s
+argo-cd-argocd-notifications-controller-646d87948-cf6fq     1/1     Running   0          4m29s
+argo-cd-argocd-redis-b6c9999c7-z7g28                        1/1     Running   0          4m29s
+argo-cd-argocd-repo-server-5f9b4c6f65-825vm                 1/1     Running   0          4m29s
+argo-cd-argocd-server-588cd6894b-222dt                      1/1     Running   0          4m29s
+</div></code></pre>
+<p>All pods should be in a <code>Running</code> state. If some of them are still initializing,
+we can use the time to review their function:</p>
+<ul>
+<li>argo-cd-argocd-<code>application-controller</code> - Core application reconciliation
+engine—monitors app states</li>
+<li>argo-cd-argocd-<code>applicationset-controller</code> - Automates creation/updating of
+ArgoCD Applications via ApplicationSet CRDs</li>
+<li>argo-cd-argocd-<code>dex-server</code>- SSO/OAuth provider backend</li>
+<li>argo-cd-argocd-<code>notifications-controller</code> - Sends notifications/triggers (Slack,
+email, etc) on sync events</li>
+<li>argo-cd-argocd-<code>redis</code> - Internal Redis used for caching and pub/sub</li>
+<li>argo-cd-argocd-<code>redis-secret-init</code> - Init job for generating Redis secrets (runs
+once, then completes)</li>
+<li>argo-cd-argocd-<code>repo-server</code> - Manages access to Git repositories and renders
+manifests</li>
+<li>argo-cd-argocd-<code>server</code> - The API &amp; Web UI server</li>
+</ul>
+<blockquote>
+<p>[!Note]
+We intentionally avoid using Load balancers and ingress to keep the
+setup simple.</p>
+</blockquote>
+<p>Next, let's try to connect to the ArgoCD Web UI. To reach the UI running on our
+remote  hands-on machine, we are going to open an SSH tunnel using the familiar
+approach and use <code>kubectl port-forward</code> to make the service reachable from the
+hands-on machine shell:</p>
+<p>In a new terminal tab/window, run the following command to open a new SSH session
+with the hands-on machine and establish a tunnel:</p>
+<pre class="hljs"><code><div>ssh -i key.pem -L 8080:localhost:443 ubuntu@&lt;hands.on.vm.ip&gt;
+</div></code></pre>
+<p>Then, inside the console, make the  kubernetes service for the ArgoCD Web UI
+reachable using port forwarding:</p>
+<pre class="hljs"><code><div>kubectl -n argocd port-forward svc/argo-cd-argocd-server 8080:443
+</div></code></pre>
+<p>If everything goes according to plan, you should be able to open the ArgoCD web UI inside
+your web browser using the following url: <a href="">http://localhost:8080</a>:</p>
+<img src="./img/argocd-login.png" width=50%>
+<h3 id="task-21-log-in-to-argo-cd-web-ui">Task 2.1 Log in to Argo CD Web UI</h3>
+<p>To log in to the ArgoCD Web UI, we'll need credentials to authenticate.
+During the installation process, a secret called <code>argocd-initial-admin-secret</code> is
+created automatically. It holds a randomly generated initial password for the
+built-in <code>admin</code> user.</p>
+<p>Let's get the password and log in to the Argo CD web ui.</p>
+<p>We can go with our familiar kubernetes approach:</p>
+<pre class="hljs"><code><div>kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d &amp;&amp; echo
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+Once we install the argocd cli client as seen in the next task, we could use it as well:</p>
+</blockquote>
+<pre class="hljs"><code><div>argocd admin initial-password -n argocd
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+Your output will be different!</p>
+</blockquote>
+<pre class="hljs"><code><div>6YdzXYvGGk6yxqOK
+</div></code></pre>
+<p>Finally, let's log in to the UI:</p>
+<ul>
+<li>URL: <a href="">http://localhost:8080</a></li>
+<li>Username: <code>admin</code></li>
+<li>Password: (the output from the previous command)</li>
+</ul>
+<img src="./img/argocd-empty-dashboard.png" width=50%>
+<h3 id="task-22-install-the-argo-cd-cli-client">Task 2.2 Install the Argo CD cli client</h3>
+<p>To install the ArgoCD cli client, we'll download the official binary from github:</p>
+<pre class="hljs"><code><div>VERSION=$(curl -L -s https://raw.githubusercontent.com/argoproj/argo-cd/stable/VERSION)
+curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/download/v<span class="hljs-variable">$VERSION</span>/argocd-linux-amd64
+</div></code></pre>
+<p>Next, we'll make the binary executable and place it in the system path:</p>
+<pre class="hljs"><code><div>sudo install -m 555 argocd /usr/<span class="hljs-built_in">local</span>/bin/argocd
+rm argocd
+</div></code></pre>
+<p>Let's verify:</p>
+<pre class="hljs"><code><div>argocd version --client
+</div></code></pre>
+<pre class="hljs"><code><div>argocd: v3.1.5+cfeed49
+  BuildDate: 2025-09-10T16:01:20Z
+  GitCommit: cfeed4910542c359f18537a6668d4671abd3813b
+  GitTreeState: clean
+  GoVersion: go1.24.6
+  Compiler: gc
+  Platform: linux/amd64
+</div></code></pre>
+<p>To manage the ArgoCD server using the ArgoCD CLI client, we need to log in
+and authenticate first. We'll be using the same credentials as in the Web UI:</p>
+<blockquote>
+<p>[!Note]
+We need the <code>--insecure</code> flag to skip the TLS verification because we’re using
+a self‑signed certificate.</p>
+</blockquote>
+<pre class="hljs"><code><div>argocd login localhost:8080 --username admin --password &lt;password&gt; --insecure
+</div></code></pre>
+<p>If everything works, our argocd context (connection profile) should be
+updated successfully:</p>
+<pre class="hljs"><code><div>'admin:login' logged in successfully
+Context 'localhost:8080' updated
+</div></code></pre>
+<p>Let's verify:</p>
+<pre class="hljs"><code><div>argocd context
+</div></code></pre>
+<pre class="hljs"><code><div>CURRENT  NAME            SERVER
+*        localhost:8080  localhost:8080
+</div></code></pre>
+<hr>
+<h2 id="task-3-first-application-deployment">Task 3. First Application Deployment</h2>
+<p>Now that we have our infrastructure fully configured, it is time to see how we
+can implement the GitOps principles in practice using ArgoCD. We'll do that by
+deploying a simple app from our Gogs git server using a declarative manifest.
+By defining the deployment manifest and application configuration as code and
+storing them in Git, we treat our setup as code and make Git our
+<code>single source of truth</code>.</p>
+<p>We'll start by cloning our Gogs repository:</p>
+<pre class="hljs"><code><div>git clone git@localhost:dojo/argo.git
+cd argo
+</div></code></pre>
+<blockquote>
+<p>[!Note]
+Placing the yaml manifests in the root of the git repository is NOT a good
+practice! We do it here for convenience. This is something we'll get back to
+in the next task!</p>
+</blockquote>
+<p>Then we'll create a standard Kubernetes deployment:</p>
+<pre class="hljs"><code><div>nano deploy-demo.yml &amp;&amp; cat $_
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span>
+<span class="hljs-attr">metadata:</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">deploy-demo</span>
+<span class="hljs-attr">spec:</span>
+  <span class="hljs-attr">replicas:</span> <span class="hljs-number">2</span>
+  <span class="hljs-attr">selector:</span>
+    <span class="hljs-attr">matchLabels:</span>
+      <span class="hljs-attr">app:</span> <span class="hljs-string">deploy-demo</span>
+  <span class="hljs-attr">template:</span>
+    <span class="hljs-attr">metadata:</span>
+      <span class="hljs-attr">labels:</span>
+        <span class="hljs-attr">app:</span> <span class="hljs-string">deploy-demo</span>
+    <span class="hljs-attr">spec:</span>
+      <span class="hljs-attr">containers:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">deploy-demo</span>
+          <span class="hljs-attr">image:</span> <span class="hljs-string">argoproj/rollouts-demo:green</span>
+          <span class="hljs-attr">ports:</span>
+            <span class="hljs-bullet">-</span> <span class="hljs-attr">containerPort:</span> <span class="hljs-number">8080</span>
+</div></code></pre>
+<p>... and a service for our application:</p>
+<pre class="hljs"><code><div>nano svc-demo.yml &amp;&amp; cat $_
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
+<span class="hljs-attr">metadata:</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">deploy-demo</span>
+<span class="hljs-attr">spec:</span>
+  <span class="hljs-attr">selector:</span>
+    <span class="hljs-attr">app:</span> <span class="hljs-string">deploy-demo</span>
+  <span class="hljs-attr">ports:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-attr">protocol:</span> <span class="hljs-string">TCP</span>
+      <span class="hljs-attr">port:</span> <span class="hljs-number">8090</span>
+      <span class="hljs-attr">targetPort:</span> <span class="hljs-number">8080</span>
+</div></code></pre>
+<p>Let's commit and push them to our git repository:</p>
+<pre class="hljs"><code><div>git config --global user.email "operations@dojobits.io"
+git config --global user.name "dojo"
+git add .
+git commit -av -m "demo app deployment and service"
+git push
+</div></code></pre>
+<h2 id="task-31-argocd---configure-connected-repository">Task 3.1 ArgoCD - Configure connected repository</h2>
+<p>Before we can deploy our application and create an Argo Application,
+we have to configure the Git Repository authentication.</p>
+<p>Open the ArgoCD Web UI: <a href="">https://localhost:8080/applications</a>. From the left
+siderbar select: Settings -&gt; Repositories -&gt; <code>Connect Repo</code></p>
+<img src="./img/argocd-git-repo-connect.png" width=60%>
+<p>Inside the form, we configure how ArgoCD connects and authenticates against the
+remote git repository.</p>
+<ul>
+<li>
+<p>Connection method: VIA SSH</p>
+</li>
+<li>
+<p>Connection Name: argo</p>
+</li>
+<li>
+<p>Project: default</p>
+</li>
+<li>
+<p>Repository URL: ssh://git@&lt;private.host.ip.addr&gt;:2222/dojo/argo.git</p>
+</li>
+<li>
+<p>SSH key: <The private SSH key></p>
+</li>
+<li>
+<p>Skip server verification: checked</p>
+</li>
+<li>
+<p>Enable LFS support (Git only): checked</p>
+</li>
+</ul>
+<p>Click: <code>CONNECT</code> to save the configuration and test the connection.
+Upon successful connection, the connection status should change to:
+<code>Successful</code>:</p>
+<img src="./img/argocd-git-repo-success.png" width=60%>
+<h2 id="task-32-register-the-demo-app-with-argocd">Task 3.2 Register the demo App with ArgoCD</h2>
+<p>Now that we have connected the git repository, let's deploy our application!
+In the Applications dashboard, click on <code>New App</code>.</p>
+<p>Fill in the following information:</p>
+<p>General:</p>
+<ul>
+<li>Application Name: deploy-demo</li>
+<li>Project Name: default</li>
+</ul>
+<p>SYNC POLICY:</p>
+<ul>
+<li>Sync Policy: Automatic</li>
+<li>ENABLE AUTO-SYNC: Checked</li>
+<li>AUTO-CREATE NAMESPACE: Checked</li>
+</ul>
+<p>SOURCE:</p>
+<ul>
+<li>Repository URL: ssh://git@&lt;private.host.ip.addr&gt;:2222/dojo/argo.git</li>
+<li>Revision: HEAD</li>
+<li>Path: .</li>
+</ul>
+<p>DESTINATION:
+Cluster URL: https://kubernetes.default.svc
+Namespace: demo</p>
+<blockquote>
+<p>[!Note]
+In our original manifest, we've not specified any namespace, and here we effectively
+overwrite <code>default</code> namespace with a custom one for the deployment.</p>
+</blockquote>
+<p>Finally, click <code>CREATE</code> to create the application.</p>
+<img src="./img/argocd-new-app.png" width=50%>
+<p>Upon successful creation, a new card with the application status will appear on
+the dashboard. In a few seconds, the state should change to: Healthy and Synced:</p>
+<img src="./img/argocd-demo-app.png" width=50%>
+<p>Click on the card to reveal details about the newly deployed application in
+a tree view:</p>
+<img src="./img/demo-app-details-tree.png" width=50%>
+<p>You can also validate that the resources have been properly created using kubectl</p>
+<pre class="hljs"><code><div>kubectl -n demo get all
+</div></code></pre>
+<pre class="hljs"><code><div>NAME                               READY   STATUS    RESTARTS   AGE
+pod/deploy-demo-6d4ddfd9bd-m7bg9   1/1     Running   0          13h
+pod/deploy-demo-6d4ddfd9bd-t5d5j   1/1     Running   0          13h
+
+NAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/deploy-demo   ClusterIP   10.96.146.224   &lt;none&gt;        8090/TCP   39h
+
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/deploy-demo   2/2     2            2           39h
+
+NAME                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/deploy-demo-5764675dfb   0         0         0       14h
+replicaset.apps/deploy-demo-6d4ddfd9bd   2         2         2       39h
+~$
+</div></code></pre>
+<h2 id="challenge-1-access-the-demo-app-web-ui">Challenge 1. Access the demo app web ui</h2>
+<blockquote>
+<p>[!Note]
+For this challenge task, we are not going to provide instructions on how to solve it.
+We've already seen the techniques required in the previous tasks.</p>
+</blockquote>
+<p>Goals:</p>
+<ul>
+<li>Open a local port-forwarding tunnel from your machine to the hands-on vm using
+the SSH client</li>
+<li>Configure port forwarding on the hands-on vm so that the <code>deploy-demo</code> service
+from the <code>demo</code> namespace is reachable from the hands-on VM.</li>
+<li>Open the demo-app web ui on your local browser.</li>
+</ul>
+<p>Upon successful completion, you should be able to see the application in your browser:</p>
+<img src="./img/deploy-demo-app-ui.png" width=60%>
+<h2 id="task-33-you-break-it-argo-fixes-it">Task 3.3 You break it, Argo fixes it</h2>
+<p>It happens pretty often, even if we don't want to admit it. We are tasked with making an
+urgent change, and the quickest way to do it is... by applying the change directly
+in our infrastructure. This happens again and again, and our infrastructure's current
+state drifts further from our desired state. Sometimes our change might even
+have unforeseen side effects, but as it wasn't properly documented, it could be
+harder to troubleshoot. Luckily, ArgoCD can help!</p>
+<p>Let's do a quick imperative patch in production (temporary, of course!):</p>
+<pre class="hljs"><code><div>kubectl -n demo patch deployment deploy-demo -p <span class="hljs-string">'{"spec":{"template":{"spec":{"containers":[{"name":"deploy-demo","image":"argoproj/rollouts-demo:red"}]}}}}'</span>
+</div></code></pre>
+<p>Refresh your browser with the app ui a few times.</p>
+<blockquote>
+<p>[!Note]
+You might have to restart the port forwarding to the app in your terminal session
+with the SSH tunnel</p>
+</blockquote>
+<pre class="hljs"><code><div>kubectl -n demo port-forward svc/deploy-demo 8090:8090
+</div></code></pre>
+<p>The rogue version of the app is now on the loose:</p>
+<img src="./img/deploy-demo-app-ui-red.png" width=60%>
+<p>Let's check what is going on in the ArgoCD web ui. Starting with the App card:</p>
+<img src="./img/argo-app-card-out-of-sync.png" width=60%>
+<p>Click on the app card to see application details tree:</p>
+<img src="./img/argo-app-tree-out-sync.png" width=60%>
+<p>We get a lot of information just from a single look! First, Argo clearly tells
+us that there is a deviation from the desired state. The Sync Status for the app
+is &quot;OutOfSync&quot; (we kinda knew that already... ), but we also see which objects of
+the app are out of sync!</p>
+<ul>
+<li>The first object of the three, the app root object, represents the app itself.
+The state OutOfSync tells us that our app doesn't match the desired state in
+git. It can also tell us, however, precisely what has changed - we'll see it in
+a moment.</li>
+<li>Underneath the root object, we see the deploy resource is out of sync, but not
+the SVC resource. We are on something!</li>
+</ul>
+<p>Another interesting observation is that none of the child objects are shown out
+of sync. After all, they are supposed to be created by their parent objects:
+pods -&gt; rs -&gt; deployment. In our kubernetes cluster, however, their current live state matches
+their desired state (from the k8s point of view), so technically they are
+not out of sync. This also helps us bubble up/isolate the problem faster, focusing
+on the problem closer to the root cause.</p>
+<p>So something is out of sync, but what? Click on the root object in the tree. A
+pop-up window will appear with summary information about the app. On top of
+the window, click on the <code>DIFF</code> tab:</p>
+<blockquote>
+<p>[!Note]
+There is also a convenient <code>DIFF</code> button in the toolbar of the app tree view</p>
+</blockquote>
+<img src="./img/deploy-demo-app-diff.png" width=60%>
+<p>We'll see a diff between the two states of our app - current and desired. You
+can click on the <code>Compact diff</code> checkbox to filter out the parts of the manifests
+that have not changed. Now it is becoming very clear what exactly is the source of
+change - the image tag that we've patched.</p>
+<p>So far, so good, but what should we do about it? Well, it depends..</p>
+<ul>
+<li>If this were in fact a valid urgent change inside the infrastructure, we could
+directly update the git resource definitions and make it the current desired
+state</li>
+<li>On the other hand, if this were a temporary test that should not persist, we could
+quickly revert it.</li>
+</ul>
+<p>Close the diff pop-up ( use the X in the upper right-hand side). On the main
+app tree view, click on the <code>SYNC</code> button in the upper toolbar. A pop-up will
+appear:</p>
+<img src="./img/app-deploy-sync-synchronize.png" width=60%>
+<p>To revert the state, we could click on the <code>SYNCHRONIZE</code> button, but we can also make
+a few observations:</p>
+<ul>
+<li>Both the insync and out-of-sync resources are selected by default (svc and deploy)</li>
+<li>There are several sync options available to choose from.</li>
+</ul>
+<p>We are not going to go into details for each of the options in here, but we'll
+touch on the subject: Which resources should we synchronize?</p>
+<p>First, with these current/default settings, syncing a resource that is already in
+sync will not change it (argo does idempotent re-apply). If you deselect the SVC resource,
+argo will show you a warning:</p>
+<pre class="hljs"><code><div>WARNING: partial synchronization is not recorded in history
+</div></code></pre>
+<p>This is a warning due to the way that ArgoCD only records full application syncs
+(when all resources are selected) in the sync history and enables rollback based
+on those points.</p>
+<p>When you perform a partial sync — syncing just a subset of resources, such as
+only the Deployment but not the Service, ArgoCD does not save this operation in
+the application's history log. As a result:</p>
+<ul>
+<li>You cannot roll back to this partial sync point (rollback is tied to full syncs).</li>
+<li>The change will not appear in the sync history timeline.</li>
+</ul>
+<p>Best practices:</p>
+<ul>
+<li>Production deployments: Always use full sync in production to maintain
+auditability, rollback support, and guarantee everything matches Git.</li>
+<li>Development/debugging: Partial sync can be useful when you want to quickly test
+changes or fix a single resource without touching the rest of the app.
+<ul>
+<li>Note: The partial sync can break the app if the rest of the resources depend on the
+resource synced.</li>
+<li>For complex apps, the partial sync can slightly speed up the process and reduce
+the API load</li>
+</ul>
+</li>
+<li>Use full sync by default and partial sync only in development/debugging when needed.</li>
+</ul>
+<p>Click on the <code>SYNCHRONIZE</code> button, leaving the default options. In a second, everything
+will be back to green and in a synced state. If we refresh the browser
+(and our port forwarding with kubectl), we should be back to the green state.</p>
+<h2 id="challenge-2-patch-the-app-and-persist-the-change-in-git">Challenge 2. Patch the app and persist the change in git</h2>
+<blockquote>
+<p>[!Note]
+For this challenge task, we are not going to provide instructions on how to solve it.
+We've already seen the techniques required in the previous tasks.</p>
+</blockquote>
+<p>Similar to the previous task, start by changing the production state:</p>
+<pre class="hljs"><code><div>kubectl -n demo patch deployment deploy-demo -p <span class="hljs-string">'{"spec":{"template":{"spec":{"containers":[{"name":"deploy-demo","image":"argoproj/rollouts-demo:red"}]}}}}'</span>
+</div></code></pre>
+<p>Goals:</p>
+<ul>
+<li>Remediate the state of the app by updating the yaml manifests and committing the
+changes in Git.</li>
+<li>After the commit, observe the changes in the Argo App state in the UI.</li>
+</ul>
+<blockquote>
+<p>[!Note]
+As we've not configured webhooks, it might take a few seconds for Argo to
+recognize the changes in git (do a pull). To speed up the state sync, you
+could use the <code>REFRESH</code> button from the top of the app tree view.</p>
+</blockquote>
+<p>Upon successful completion, the sync state of the app should be back to green.</p>
+<p>:TODO:</p>
+<h2 id="task-4-best-practices">Task 4 Best practices</h2>
+<p>In the earlier tasks, we've seen some good and some bad practices - like placing
+all of the manifests in the root of the git repository. Here we'll review some of the best
+practices regarding:</p>
+<ul>
+<li>Repository organization</li>
+<li>ArgoCD Configuration</li>
+<li>Team collaboration</li>
+</ul>
+<h2 id="task-41-gitops-and-argo-cd-best-practices-review">Task 4.1 GitOps and Argo CD best practices review</h2>
+<p>In this task, we'll review some of the GitOps and Argo CD best practices
+and recommendations. Some of those recommendations are actually coming from the official Argo CD <a href="https://argo-cd.readthedocs.io/en/stable/user-guide/best_practices/">Best Practices</a> guide:</p>
+<ul>
+<li>Use Git repositories as a single source of truth
+<ul>
+<li>Store a <code>declarative representation</code> of our <code>desired state</code> from tools like
+Helm, Kustomize, etc., inside Git and modify them only through Git commits.</li>
+<li><code>WHY</code>: This single source of truth prevents configuration drift, making the
+infrastructure more reliable and reproducible. Besides that, it helps maintain
+an auditable and versioned history of every deployment.</li>
+</ul>
+</li>
+<li>Separate Application Configuration from Application Source Code and Infrastructure
+related resources in different repositories
+<ul>
+<li>Store application manifests (Deployments, Services, ConfigMaps, Secrets, etc.)
+in dedicated repositories, separate from repositories holding infrastructure
+related resources (like Namespaces, RBAC, ClusterRoles, etc.) and Source Code.</li>
+<li><code>WHY</code>: This separation enforces Permission and Security Boundaries, allowing for more
+effective management, access control, and operational simplicity.</li>
+</ul>
+</li>
+<li>Centralize environment-specific configurations from a single repository/branch</li>
+<li>Manage all environment-specific configurations in a centralized location and
+use methods like Kustomize overlays, Helm Values, and ApplicationSets (Argo)
+to effectively manage them.</li>
+<li><code>WHY</code>: This allows easier promotion of changes between environments while using
+git to version control them. Argo CD supports ApplicationSets (automates management
+of multiple applications from a single source through templating and generators)</li>
+<li>Use templating tools
+<ul>
+<li>The templating and overlay tools like Helm, Kustomize, or ApplicationSets to
+define the base application configuration and then apply environment-specific
+changes.</li>
+<li><code>WHY</code>: manually managing configuration manifests is error-prone, not scalable
+and hard to maintain.</li>
+</ul>
+</li>
+<li>Utilize the Argo CD <code>Projects</code> and Role-Based Access Control (<code>RBAC</code>) for shared
+environments
+<ul>
+<li>In case the environments are shared between multiple teams or tenants through
+the use of Argo Projects, we can impose fine-grained controls over what gets
+deployed, where, and by whom. The <code>RBAC</code> policies enable to define granular
+permissions preventing unauthorized access.</li>
+<li><code>WHY</code>: Enforces the principles of <code>Least Privilege</code> and apply logical isolation.
+This also improves auditability, governance, compliance, scalability and reduces
+complexity</li>
+</ul>
+</li>
+<li>Uses of Automated Sync and Sync Waves
+<ul>
+<li>Through <code>automatic synchronization</code> in <code>non-production</code> environments (like dev
+and staging), we can implement continuous/rapid deployment. In <code>production</code>, it is
+safer to implement manual policy requiring human approval, perhaps <code>4-Eyed</code>
+principle. With <code>auto-pruning</code> we can reduce configuration drift, making sure
+the resources not tracked in git are removed. The <code>Sync Waves</code> allows us to
+control the order of resource synchronization - in case there are dependencies.
+For example, a database should be configured before deploying the application.</li>
+<li><code>WHY</code>: Ensures predictable and successful deployments through proper dependency
+management.</li>
+</ul>
+</li>
+</ul>
+<h2 id="we-are-all-done">We are all done!</h2>
+<h2 id="lets-get-in-touch"><strong>Let's get in touch!</strong></h2>
+<ul>
+<li>Website: <a href="https://dojobits.io">Dojobits</a></li>
+<li>LinkedIn: <a href="https://www.linkedin.com/company/dojobits">Dojobits</a></li>
+<li>Iliyan Petkov: <a href="https://www.linkedin.com/in/iliyan-s-petkov/">LinkedIn</a></li>
+<li>Valentin Hristev: <a href="https://www.linkedin.com/in/valentin-hristev/">LinkedIn</a></li>
+</ul>
+<h2 id="thank-you-for-joining-us"><em>THANK YOU for joining us!</em></h2>
+<p>Thank you for attending today. We hope you leave with a good understanding of
+the core principles of GitOps and feel empowered to start applying these best
+practices with Argo CD in your next projects.</p>
+<img src="https://dojobits.github.io/assets/logo/dojobits-logo.png" width="30%">
+<p><em>Copyright© 2025 DojoBits, all rights reserved</em></p>
+
+</body>
+</html>

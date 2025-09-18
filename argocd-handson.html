@@ -621,6 +621,9 @@ corner and log-in with the credentials from the previous step.</p>
 <p>A new screen, <code>New Repository</code>, will appear where we can configure our new repository
 by simply typing a name: <code>argo</code> and then clicking on the <code>Create Repository</code> link.</p>
 <img src="./img/gogs-new-repo.png" width=60%>
+<p>By default the git branch name in Gogs in <code>main</code>, we'll change it to master. Click on the
+settings icon for the new repository. On the left hand side select <code>branches</code>, then change
+the default branch from <code>main</code> to <code>master</code></p>
 <p>Our repository is now ready! Write down the repository url for later:
 <code>git@localhost:dojo/argo.git</code></p>
 <img src="./img/gogs-repo-files.png" width=60%>
@@ -633,7 +636,7 @@ ssh-add ~/.ssh/dojo.key
 cat &lt;&lt;EOF &gt;&gt; ~/.ssh/config
 Host localhost
   HostName localhost
-  User git
+  User dojo
   Port 2222
   IdentityFile ~/.ssh/dojo.key
   IdentitiesOnly yes
@@ -644,7 +647,7 @@ EOF
 </div></code></pre>
 <p>Then register the Key in your Gogs profile:</p>
 <ul>
-<li>Log in to the Gogs web ui.</li>
+<li>Log in to the Gogs web UI.</li>
 <li>Click on the User Profile Image in the upper right-hand side corner → <code>Your Settings</code> → &quot;SSH Keys&quot;.</li>
 <li>Click <code>Add Key</code>, give it a label: <code>dojo</code>, paste the contents of your public key.</li>
 <li>Click <code>Add Key</code> to save the key.</li>
@@ -683,7 +686,7 @@ TEST SUITE: None
 NOTES:
 In order to access the server UI you have the following options:
 
-1. kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:443
+1. kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:8080
 
     and then open the browser on http://localhost:8080 and accept the certificate
 

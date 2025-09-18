@@ -229,7 +229,7 @@ into our shell session, but we can use a small trick to work around that.
 We will change our primary group to the docker group and then change it back to
 our initial group.
 
-> [!Note] 
+> [!Note]
 > This is not a permanent change, and it affects only our current session.
 
 ```bash
@@ -346,6 +346,10 @@ by simply typing a name: `argo` and then clicking on the `Create Repository` lin
 
 <img src="./img/gogs-new-repo.png" width=60%>
 
+By default the git branch name in Gogs in `main`, we'll change it to master. Click on the
+settings icon for the new repository. On the left hand side select `branches`, then change
+the default branch from `main` to `master`
+
 Our repository is now ready! Write down the repository url for later:
 `git@localhost:dojo/argo.git`
 
@@ -365,7 +369,7 @@ ssh-add ~/.ssh/dojo.key
 cat <<EOF >> ~/.ssh/config
 Host localhost
   HostName localhost
-  User git
+  User dojo
   Port 2222
   IdentityFile ~/.ssh/dojo.key
   IdentitiesOnly yes
@@ -380,7 +384,7 @@ cat ~/.ssh/dojo.key.pub
 
 Then register the Key in your Gogs profile:
 
-- Log in to the Gogs web ui.
+- Log in to the Gogs web UI.
 - Click on the User Profile Image in the upper right-hand side corner → `Your Settings` → "SSH Keys".
 - Click `Add Key`, give it a label: `dojo`, paste the contents of your public key.
 - Click `Add Key` to save the key.
@@ -437,7 +441,7 @@ TEST SUITE: None
 NOTES:
 In order to access the server UI you have the following options:
 
-1. kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:443
+1. kubectl port-forward service/argo-cd-argocd-server -n argocd 8080:8080
 
     and then open the browser on http://localhost:8080 and accept the certificate
 
@@ -639,7 +643,7 @@ cd argo
 
 > [!Note]
 > Placing the yaml manifests in the root of the git repository is NOT a good
-> practice! We do it here for convenience. This is something we'll get back to 
+> practice! We do it here for convenience. This is something we'll get back to
 > in the next task!
 
 Then we'll create a standard Kubernetes deployment:
@@ -893,7 +897,7 @@ So far, so good, but what should we do about it? Well, it depends..
 
 - If this were in fact a valid urgent change inside the infrastructure, we could
   directly update the git resource definitions and make it the current desired
-  state 
+  state
 - On the other hand, if this were a temporary test that should not persist, we could
   quickly revert it.
 
@@ -903,7 +907,7 @@ appear:
 
 <img src="./img/app-deploy-sync-synchronize.png" width=60%>
 
-To revert the state, we could click on the `SYNCHRONIZE` button, but we can also make 
+To revert the state, we could click on the `SYNCHRONIZE` button, but we can also make
 a few observations:
 
 - Both the insync and out-of-sync resources are selected by default (svc and deploy)
@@ -943,7 +947,7 @@ Best practices:
   the API load
 - Use full sync by default and partial sync only in development/debugging when needed.
 
-Click on the `SYNCHRONIZE` button, leaving the default options. In a second, everything 
+Click on the `SYNCHRONIZE` button, leaving the default options. In a second, everything
 will be back to green and in a synced state. If we refresh the browser
 (and our port forwarding with kubectl), we should be back to the green state.
 

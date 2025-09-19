@@ -370,7 +370,7 @@ code {
 <h2 id="gitops-made-simple-best-practices-using-argocd--kubernetes">GitOps made simple: Best Practices using ArgoCD &amp; Kubernetes</h2>
 <h2 id="overview">Overview</h2>
 <p>GitOps is a powerful approach for using Git as a single source of truth for
-managing both application and infrastructure configurations. GitOps is a specialized
+managing both application and infrastructure configurations. It is a specialized
 methodology within the broader DevOps cultural and technical philosophy, and brings
 several key benefits:</p>
 <ul>
@@ -415,6 +415,16 @@ a built-in SSH client in the terminal!</p>
 <li>SSH client - built-in like openSSH or third-party like SecureCRT, MobaXterm, Putty, etc.</li>
 <li>Internet connectivity to the cloud infrastructure</li>
 </ul>
+<p>In case you are following the instructions after the event, you can recreate
+the lab environment by creating a dedicated virtual machine based on Ubuntu 24.04
+linux using your prefered hypervisor (like KVM, ProxMox VE, VirtualBox, VMware
+Workstation/Fusion, etc.).</p>
+<p>The recommended minimal system requriements are:</p>
+<ul>
+<li>2 cores</li>
+<li>4 GB ram</li>
+<li>15 GB disk size</li>
+</ul>
 <h2 id="get-familiar-with-our-hands-on-environment">Get familiar with our hands-on environment</h2>
 <p>The remote lab (hands-on) environment is a virtual machine deployed in the cloud
 and is based on Ubuntu Linux 24.04 LTS. It is only accessible over SSH.</p>
@@ -431,7 +441,7 @@ the end of the event. Please don't store any important or sensitive data on them
 </blockquote>
 <blockquote>
 <p>[!Warning]
-Please don't reboot your hands-on VM as this will change its IP address.</p>
+Please don't reboot your hands-on VM as this might change its IP address.</p>
 </blockquote>
 <p>The hands-on machine credentials are:</p>
 <ul>
@@ -455,8 +465,26 @@ a warning:</p>
 @    WARNING: UNPROTECTED PRIVATE KEY FILE!              @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 </div></code></pre>
-<p>Next, let's log in to our dedicated hands-on machine using an OpenSSH client:</p>
-<pre class="hljs"><code><div>user@workstation:~$ ssh -i key.pem ubuntu@&lt;hands.on.machine.ip&gt;
+<p>Throughout the hands-on we might have to create multiple ssh sessions to our
+target hands-on machine. To make it easier to reference its IP address, let's
+store it in a text file. In the following examples, please substitute the
+references to <code>public.hands.on.ip</code> with the public IP address of your hands-on
+machine provided by your instructur.</p>
+<p>On Linux or Mac os:</p>
+<pre class="hljs"><code><div>echo public.hands.on.ip &gt; ./ip.txt
+</div></code></pre>
+<p>or if you are using the OpenSSH client in Windows PowerShell:</p>
+<pre class="hljs"><code><div>"public.hands.on.ip" | Set-Content ip.txt
+</div></code></pre>
+<p>Next, let's log in to our dedicated hands-on machine by first initializing an
+environment varialbe with the IP address:</p>
+<pre class="hljs"><code><div><span class="hljs-meta">#</span><span class="bash">Windows:</span>
+<span class="hljs-meta">$</span><span class="bash">HANDSONIP = Get-Content ip.txt</span>
+<span class="hljs-meta">
+#</span><span class="bash">Mac/Linux:</span>
+HANDSONIP=$(cat ./ip.txt)
+</div></code></pre>
+<pre class="hljs"><code><div>user@workstation:~$ ssh -i key.pem ubuntu@$HANDSONIP
 ~$
 </div></code></pre>
 <h2 id="task-1-configure-the-hands-on-infrastructure">Task 1. Configure the hands-on infrastructure</h2>
@@ -603,7 +631,13 @@ Gogs is up! ✅
 </div></code></pre>
 <p>Done! Gogs has a built-in web UI which we can reach by just opening an SSH tunnel
 to our hands-on machine using its <code>public ip</code> address:</p>
-<pre class="hljs"><code><div>ssh -i ./key.pem -L 2222:localhost:2222  -L 3000:localhost:3000 ubuntu@&lt;hands.on.ip.addr&gt;
+<pre class="hljs"><code><div><span class="hljs-meta">#</span><span class="bash">Windows:</span>
+<span class="hljs-meta">$</span><span class="bash">HANDSONIP = Get-Content ip.txt</span>
+<span class="hljs-meta">
+#</span><span class="bash">Mac/Linux:</span>
+HANDSONIP=$(cat ./ip.txt)
+</div></code></pre>
+<pre class="hljs"><code><div>ssh -i key.pem -L 2222:localhost:2222 -L 3000:localhost:3000 ubuntu@$HANDSONIP
 </div></code></pre>
 <p>and then using the url: <a href="http://localhost:3000/">http://localhost:3000/</a> in a web browser:</p>
 <img src="./img/gogs-home.png" width=50%>
@@ -614,7 +648,7 @@ as code. With Gogs, this is quite easy!</p>
 corner and log-in with the credentials from the previous step.</p>
 <ul>
 <li>username: <code>dojo</code></li>
-<li>password: <the-dynamic-password></li>
+<li>password: <code>from the install script output</code></li>
 </ul>
 <p>Click on the <code>+</code> icon, next to &quot;My Repositories&quot; field on the main screen:</p>
 <img src="./img/gogs-create-repo-link.png" width=60%>
@@ -639,7 +673,7 @@ Host localhost
   IdentitiesOnly yes
 EOF
 </div></code></pre>
-<p>Copy the content of the public key:</p>
+<p>Copy the content of the public key from the command output:</p>
 <pre class="hljs"><code><div>cat ~/.ssh/dojo.key.pub
 </div></code></pre>
 <p>Then register the Key in your Gogs profile:</p>
@@ -739,7 +773,13 @@ approach and use <code>kubectl port-forward</code> to make the service reachable
 hands-on machine shell:</p>
 <p>In a new terminal tab/window, run the following command to open a new SSH session
 with the hands-on machine and establish a tunnel:</p>
-<pre class="hljs"><code><div>ssh -i ./key.pem -L 8080:localhost:8080 ubuntu@&lt;hands.on.vm.ip&gt;
+<pre class="hljs"><code><div><span class="hljs-meta">#</span><span class="bash">Windows:</span>
+<span class="hljs-meta">$</span><span class="bash">HANDSONIP = Get-Content ip.txt</span>
+<span class="hljs-meta">
+#</span><span class="bash">Mac/Linux:</span>
+HANDSONIP=$(cat ./ip.txt)
+</div></code></pre>
+<pre class="hljs"><code><div>ssh -i ./key.pem -L 8080:localhost:8080 ubuntu@$HANDSONIP
 </div></code></pre>
 <p>Then, inside the console, make the  kubernetes service for the ArgoCD Web UI
 reachable using port forwarding:</p>
@@ -777,7 +817,7 @@ Your output will be different!</p>
 </div></code></pre>
 <p>Finally, let's log in to the UI:</p>
 <ul>
-<li>URL: <a href="">http://localhost:8080</a></li>
+<li>URL: <a href="http://localhost:8080">http://localhost:8080</a></li>
 <li>Username: <code>admin</code></li>
 <li>Password: (the output from the previous command)</li>
 </ul>
@@ -832,7 +872,17 @@ storing them in Git, we treat our setup as code and make Git our
 <code>single source of truth</code>.</p>
 <p>We'll start by cloning our Gogs repository:</p>
 <pre class="hljs"><code><div>git clone git@localhost:dojo/argo.git
-cd argo
+</div></code></pre>
+<pre class="hljs"><code><div>Cloning into 'argo'...
+The authenticity of host '[localhost]:2222 ([::1]:2222)' can't be established.
+ED25519 key fingerprint is SHA256:pjdbAy6PKLRvWbymFDN2fUru6VpeuREtnMd5cdObLDQ.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[localhost]:2222' (ED25519) to the list of known hosts.
+warning: You appear to have cloned an empty repository.
+~$
+</div></code></pre>
+<pre class="hljs"><code><div>cd argo
 </div></code></pre>
 <blockquote>
 <p>[!Note]
@@ -909,7 +959,7 @@ remote git repository.</p>
 The &lt;private.host.ip.addr&gt; is the private ip address of the hands-on machine.
 You can get it form the terminal. Use the command <code>ip -4 a</code> to list all ipv4
 addresses and related network interfaces. Look for the first network interface.
-Alternatively you could try to use:
+Alternatively you could filter the interfaces with:
 <code>ip -4 -o a | cut -d &quot;:&quot; -f 2 | grep -vE &quot;^ lo|^ br-|^ docker|^ cilium_host&quot;</code></p>
 </li>
 <li>
@@ -949,7 +999,7 @@ In the Applications dashboard, click on <code>New App</code>.</p>
 </ul>
 <p>SOURCE:</p>
 <ul>
-<li>Repository URL: <code>ssh://git@&lt;private.host.ip.addr&gt;:2222/dojo/argo.git</code></li>
+<li>Repository URL: <code>Select from the drop-down menu</code></li>
 <li>Revision: HEAD</li>
 <li>Path: <code>.</code></li>
 </ul>
@@ -1134,7 +1184,6 @@ recognize the changes in git (do a pull). To speed up the state sync, you
 could use the <code>REFRESH</code> button from the top of the app tree view.</p>
 </blockquote>
 <p>Upon successful completion, the sync state of the app should be back to green.</p>
-<p>:TODO:</p>
 <h2 id="task-4-best-practices">Task 4 Best practices</h2>
 <p>In the earlier tasks, we've seen some good and some bad practices - like placing
 all of the manifests in the root of the git repository. Here we'll review some of the best

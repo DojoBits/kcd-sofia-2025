@@ -1060,8 +1060,6 @@ Goals:
 Upon successful completion, the sync state of the app should be back to green.
 
 
-:TODO:
-
 ## Task 4 Best practices
 
 In the earlier tasks, we've seen some good and some bad practices - like placing

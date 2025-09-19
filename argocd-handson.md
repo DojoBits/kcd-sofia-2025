@@ -10,7 +10,7 @@
 ## Overview
 
 GitOps is a powerful approach for using Git as a single source of truth for
-managing both application and infrastructure configurations. GitOps is a specialized
+managing both application and infrastructure configurations. It is a specialized
 methodology within the broader DevOps cultural and technical philosophy, and brings
 several key benefits:
 
@@ -56,6 +56,17 @@ The list of prerequisites to complete the workshop are:
 - SSH client - built-in like openSSH or third-party like SecureCRT, MobaXterm, Putty, etc.
 - Internet connectivity to the cloud infrastructure
 
+In case you are following the instructions after the event, you can recreate
+the lab environment by creating a dedicated virtual machine based on Ubuntu 24.04
+linux using your prefered hypervisor (like KVM, ProxMox VE, VirtualBox, VMware
+Workstation/Fusion, etc.).
+
+The recommended minimal system requriements are:
+
+- 2 cores
+- 4 GB ram
+- 15 GB disk size
+
 
 ## Get familiar with our hands-on environment
 
@@ -74,7 +85,7 @@ and an `SSH key` that will be shared with you at the beginning of the event.
 > the end of the event. Please don't store any important or sensitive data on them!
 
 >[!Warning]
-> Please don't reboot your hands-on VM as this will change its IP address.
+> Please don't reboot your hands-on VM as this might change its IP address.
 
 The hands-on machine credentials are:
 
@@ -104,10 +115,38 @@ user@workstation:~$ chmod 400 key.pem
   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   ```
 
-Next, let's log in to our dedicated hands-on machine using an OpenSSH client:
+Throughout the hands-on we might have to create multiple ssh sessions to our
+target hands-on machine. To make it easier to reference its IP address, let's
+store it in a text file. In the following examples, please substitute the
+references to `public.hands.on.ip` with the public IP address of your hands-on
+machine provided by your instructur.
+
+On Linux or Mac os:
 
 ```shell
-user@workstation:~$ ssh -i key.pem ubuntu@<hands.on.machine.ip>
+echo public.hands.on.ip > ./ip.txt
+```
+
+or if you are using the OpenSSH client in Windows PowerShell:
+
+```shell
+"public.hands.on.ip" | Set-Content ip.txt
+```
+
+Next, let's log in to our dedicated hands-on machine by first initializing an
+environment varialbe with the IP address:
+
+
+```shell
+#Windows:
+$HANDSONIP = Get-Content ip.txt
+
+#Mac/Linux:
+HANDSONIP=$(cat ./ip.txt)
+```
+
+```shell
+user@workstation:~$ ssh -i key.pem ubuntu@$HANDSONIP
 ~$
 ```
 
@@ -318,7 +357,15 @@ Done! Gogs has a built-in web UI which we can reach by just opening an SSH tunne
 to our hands-on machine using its `public ip` address:
 
 ```shell
-ssh -i ./key.pem -L 2222:localhost:2222  -L 3000:localhost:3000 ubuntu@<hands.on.ip.addr>
+#Windows:
+$HANDSONIP = Get-Content ip.txt
+
+#Mac/Linux:
+HANDSONIP=$(cat ./ip.txt)
+```
+
+```shell
+ssh -i key.pem -L 2222:localhost:2222 -L 3000:localhost:3000 ubuntu@$HANDSONIP
 ```
 
 and then using the url: [http://localhost:3000/](http://localhost:3000/) in a web browser:
@@ -335,7 +382,7 @@ In the Gogs Web ui, click on the `Sign in` link in the upper right-hand side
 corner and log-in with the credentials from the previous step.
 
 - username: `dojo`
-- password: <the-dynamic-password>
+- password: `from the install script output`
 
 Click on the `+` icon, next to "My Repositories" field on the main screen:
 
@@ -372,7 +419,7 @@ Host localhost
 EOF
 ```
 
-Copy the content of the public key:
+Copy the content of the public key from the command output:
 
 ```shell
 cat ~/.ssh/dojo.key.pub
@@ -501,7 +548,15 @@ In a new terminal tab/window, run the following command to open a new SSH sessio
 with the hands-on machine and establish a tunnel:
 
 ```shell
-ssh -i ./key.pem -L 8080:localhost:8080 ubuntu@<hands.on.vm.ip>
+#Windows:
+$HANDSONIP = Get-Content ip.txt
+
+#Mac/Linux:
+HANDSONIP=$(cat ./ip.txt)
+```
+
+```shell
+ssh -i ./key.pem -L 8080:localhost:8080 ubuntu@$HANDSONIP
 ```
 
 Then, inside the console, make the  kubernetes service for the ArgoCD Web UI
@@ -553,7 +608,7 @@ argocd admin initial-password -n argocd
 
 Finally, let's log in to the UI:
 
-- URL: [http://localhost:8080]()
+- URL: [http://localhost:8080](http://localhost:8080)
 - Username: `admin`
 - Password: (the output from the previous command)
 
@@ -639,6 +694,20 @@ We'll start by cloning our Gogs repository:
 
 ```shell
 git clone git@localhost:dojo/argo.git
+```
+
+```shell
+Cloning into 'argo'...
+The authenticity of host '[localhost]:2222 ([::1]:2222)' can't be established.
+ED25519 key fingerprint is SHA256:pjdbAy6PKLRvWbymFDN2fUru6VpeuREtnMd5cdObLDQ.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[localhost]:2222' (ED25519) to the list of known hosts.
+warning: You appear to have cloned an empty repository.
+~$
+```
+
+```shell
 cd argo
 ```
 
@@ -727,7 +796,7 @@ remote git repository.
   The <private.host.ip.addr> is the private ip address of the hands-on machine.
   You can get it form the terminal. Use the command `ip -4 a` to list all ipv4
   addresses and related network interfaces. Look for the first network interface.
-  Alternatively you could try to use:
+  Alternatively you could filter the interfaces with:
   `ip -4 -o a | cut -d ":" -f 2 | grep -vE "^ lo|^ br-|^ docker|^ cilium_host"`
 
 - SSH key: <The private SSH key>
@@ -767,7 +836,7 @@ SYNC OPTIONS:
 
 SOURCE:
 
-- Repository URL: `ssh://git@<private.host.ip.addr>:2222/dojo/argo.git`
+- Repository URL: `Select from the drop-down menu`
 - Revision: HEAD
 - Path: `.`
 
